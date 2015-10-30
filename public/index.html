@@ -1,0 +1,32 @@
+<!doctype html>
+<html ng-app="warZone">
+	<head >
+		<meta charset="utf-8" />
+
+		<title>Army war dashboard</title>
+
+		<script src="assets/angular.min.js"></script>
+		<script src="assets/angular-ui-router.min.js"></script>
+
+		<script src="assets/angular-cookies.min.js"></script>
+		<script src="assets/restangular.min.js"></script>
+		<script src="assets/lodash.min.js"></script>
+		<script src="assets/ui-bootstrap-tpls.min.js"></script>
+		<script src="core.js"></script>
+		<link rel="stylesheet" href="assets/bootstrap.min.css" />
+	</head>
+
+	<body>
+	<div ng-controller="warMainCtrl">
+		<button type="button" class="btn btn-default btn-sm" ui-sref="mainstage">Battlefield</button>
+		<button type="button" class="btn btn-default btn-sm" ui-sref="warplayers">Players</button>
+
+		<div ui-view>
+		</div>
+	</div>
+
+	</body>
+</html>
+
+
+
