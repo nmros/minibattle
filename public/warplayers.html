@@ -1,7 +1,12 @@
 <div id="warPlayers">
 	<h4>war players</h4>
 
-	<button type="button" class="btn btn-default btn-sm" ng-disabled="god_active == false" ng-click="becomePlayer('god')">Become a GOD</button>
-	<button type="button" class="btn btn-default btn-sm" ng-disabled="russia_active == false" ng-click="becomePlayer('russia')">Become a Russia</button>
-	<button type="button" class="btn btn-default btn-sm" ng-disabled="china_active == false" ng-click="becomePlayer('china')">Become a China</button>
+	<button type="button" ng-class="{'btn-info' : god.active == true}" class="btn btn-default btn-sm" ng-disabled="god.active == false" ng-click="becomePlayer('god')"  ng-model="god.model" >Become a GOD</button>	
+
+	<button type="button" ng-class="{'btn-info' : russia.active == true}" class="btn btn-default btn-sm" ng-disabled="russia.active == false" ng-click="becomePlayer('russia')"  ng-model="russia.model">Become a Russia</button>
+
+	<button type="button" ng-class="{'btn-info' :china.active == true}" class="btn btn-default btn-sm" ng-disabled="china.active == false" ng-click="becomePlayer('china')" ng-model="china.model">Become a China</button>
+
 </div>
+
+

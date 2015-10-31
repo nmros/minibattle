@@ -101,9 +101,9 @@ function init_players(req, res){
     }
 
 
-    init_god(req, res);
-    init_russia(req, res);
-    init_china(req, res);
+    // init_god(req, res);
+    // init_russia(req, res);
+    // init_china(req, res);
 
 };
 

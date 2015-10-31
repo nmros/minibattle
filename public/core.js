@@ -17,6 +17,7 @@ angular.module('warZone', ['ui.router','restangular','ngCookies'])
 	});
 }])
 
+
 .factory('WarRest', ['Restangular', function(Restangular){
 	return function(baseurl){
 		var restangular = Restangular.withConfig(function(RestangularConfigurer){
@@ -28,6 +29,20 @@ angular.module('warZone', ['ui.router','restangular','ngCookies'])
 	}
 }])
 
+
+.factory('interScope',  [ function(){
+	var interdata = {};
+	interdata.dict = {};
+
+	interdata.store = function(var1){
+		interdata.dict = {content:var1};
+
+	};
+
+	return interdata ; 
+
+}])
+
 .controller("warMainCtrl", [ '$rootScope','$scope','WarRest', function($rootScope, $scope, restng){
 	console.log("warMainCtrl");
 	$scope.event_source = new EventSource('/events') ; 
@@ -37,45 +52,88 @@ angular.module('warZone', ['ui.router','restangular','ngCookies'])
 }])
 
 
-.controller("warPlayersCtrl", [ '$cookies', '$rootScope', '$scope','WarRest', function($cookies, $rootScope, $scope, restng){
+.controller("warPlayersCtrl", [ '$cookies', '$rootScope', '$scope','WarRest', 'interScope', function($cookies, $rootScope, $scope, restng, interScope){
 	console.log("warPlayersCtrl");
 
 	var source = $scope.event_source ; 
 
-	
+	if (interScope.dict.content !== undefined){
+		$scope.china = interScope.dict.content.china;
+		$scope.russia = interScope.dict.content.russia;
+		$scope.god = interScope.dict.content.god;
+	}
 
 	var handleUrgentMessage = function(msg){
 		var msg_data = JSON.parse(msg.data);
 		var browser_sess_id = $cookies.get('sess_id');
+		var player_state  = {};
+
+		$scope.browser_sess_id = browser_sess_id;
+		
+		$scope.china = {};
+		$scope.russia = {};
+		$scope.god = {};
 
 		$scope.$apply(function(){
 			angular.forEach( msg_data['players'], function( val, key ){
 				if (key == "china_id" ){
 					if (browser_sess_id == val){
-						$scope.china_active = true;
-						$scope.russia_active = false;
-						$scope.god_active = false;
+						$scope.china.active = true;
+						$scope.china.model = true;
+
+						$scope.russia.active = false;
+						$scope.russia.model = false;
+
+						$scope.god.active = false;
+						$scope.god.model = false;
+
+
 					}else {
-						$scope.china_active = false;
+						$scope.china.active = false;
+						$scope.china.model = false;
 					}
 
 				}else if (key == "russia_id" ){
 					if (browser_sess_id == val){
-						$scope.russia_active = true;
-						$scope.china_active = false;
-						$scope.god_active = false;
+						$scope.russia.active = true;
+						$scope.russia.model = true;
+
+						$scope.china.active = false;
+						$scope.china.model = false;
+
+						$scope.god.active = false;
+						$scope.god.model = false;
+
+
 					}else {
-						$scope.russia_active = false;
+						$scope.russia.active = false;
+						$scope.russia.model = false;
 					}
 				}else if (key == "god_id" ){
 					if (browser_sess_id == val){
-						$scope.god_active = true;
-						$scope.russia_active = false;
-						$scope.china_active = false;
+						$scope.god.active = true;
+						$scope.god.model = true;
+
+						$scope.russia.active = false;
+						$scope.russia.model = false;
+
+						$scope.china.active = false;
+						$scope.china.model = false;
+
+
+
 					}else {
-						$scope.god_active = false;
+						$scope.god.active = false;
+						$scope.god.model = false;
+
 					}
 				}
+				player_state['china'] = $scope.china;
+				player_state['russia'] = $scope.russia;
+				player_state['god'] = $scope.god;
+
+				interScope.store(player_state);
+
 
 			} );
 		});
