@@ -1,6 +1,15 @@
-<div id="mainStage">
-	<span>{{mydata}}</span>
-	<!-- <span>{{diagstring}}</span> -->
-	<span>alfa </span>
+<div id="mainStage" class="row clearfix">
+	<span>{{warTimer}}</span>
+	<war-scene></war-scene>
+
+	<div id="playerConsoler">
+		<control-player-panel playername="China" military-state="militaryState.china" ></control-player-panel>
+		<control-player-panel playername="Russia "military-state="militaryState.russia" ></control-player-panel>
+	</div>
+	
+	<div id="battleResult">
+		<battle-result battle-stats="battleResult"></battle-result>
+	</div>
 
 </div>
+

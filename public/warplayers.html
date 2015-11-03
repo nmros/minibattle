@@ -1,5 +1,5 @@
-<div id="warPlayers">
-	<h4>war players</h4>
+<div id="warPlayers" class="row clearfix">
+	<h4>Choose Player</h4>
 
 	<button type="button" ng-class="{'btn-info' : god.active == true}" class="btn btn-default btn-sm" ng-disabled="god.active == false" ng-click="becomePlayer('god')"  ng-model="god.model" >Become a GOD</button>	
 
@@ -7,6 +7,10 @@
 
 	<button type="button" ng-class="{'btn-info' :china.active == true}" class="btn btn-default btn-sm" ng-disabled="china.active == false" ng-click="becomePlayer('china')" ng-model="china.model">Become a China</button>
 
+
+
 </div>
 
+
+<control-god-panel ng-if="god.active"></control-god-panel>
 

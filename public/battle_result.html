@@ -1,0 +1,31 @@
+<div id="battleResult">
+	<h4>battleResult</h4>
+
+	<div class="winnerPlane" ng-if="battleResult.plane.won !== '' ">
+		<span class="battleResultDesc">Winner in category planes  is : </span>
+		<span class="battleResultValue">{{battleResult.plane.won}} </span>
+		<span class="battleResultDesc">with ratio : </span>
+		<span class="battleResultValue">{{battleResult.plane.ratio}}: </span>
+
+	</div>
+
+	<div class="winnerSoldier" ng-if="battleResult.soldier.won !== '' ">
+		<span class="battleResultDesc">Winner in category soldiers is : </span>
+		<span class="battleResultValue">{{battleResult.soldier.won}} </span>
+		<span class="battleResultDesc">with ratio : </span>
+		<span class="battleResultValue">{{battleResult.soldier.ratio}}: </span>
+
+
+	</div>
+
+	<div class="winnerTank" ng-if="battleResult.tank.won !== '' ">
+		<span class="battleResultDesc">Winner in category tanks is : </span>
+		<span class="battleResultValue">{{battleResult.tank.won}} </span>
+		<span class="battleResultDesc">with ratio : </span>
+		<span class="battleResultValue">{{battleResult.tank.ratio}}: </span>
+
+	</div>
+
+</div>
+
+

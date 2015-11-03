@@ -17,6 +17,8 @@ var god = require('./god');
 var russia = require('./russia');
 var china = require('./china');
 
+var _ = require('lodash-node');
+
 mongoose.connect('mongodb://localhost/test');
 
 
@@ -71,9 +73,6 @@ function init_god(req, res){
     var player_id = req.session.sess_data.sess_id;
 
 
-    console.log(req.session.sess_data);
-
-
     if ( is_god_present == false ){
         god.create(player_id);
         players_data['god_id'] = player_id;
@@ -92,7 +91,6 @@ function init_players(req, res){
 
     sess_data['sess_id'] = sess_id;
 
-
     if (session.sess_data == undefined){
         session.sess_data = sess_data;
         var minute = 60 * 1000;
@@ -100,56 +98,137 @@ function init_players(req, res){
         res.cookie('sess_id', sess_data['sess_id'], { maxAge: hour })
     }
 
-
-    // init_god(req, res);
-    // init_russia(req, res);
-    // init_china(req, res);
-
 };
 
-app.get('/api/player/:name', function(req, res){
-
-
+app.post('/api/player/:name/setplayer', function(req, res){
     if (req.params.name == "init"){
         init_players(req, res);
         res.send("game initiated");
-        sendUrgentMessage(req, res, players_data); 
+        publishUrgentMessage(req, res); 
 
     }else if (req.params.name == "god"){
         init_god(req, res);
         res.send("god initiated");
-        sendUrgentMessage(req, res, players_data); 
+        publishUrgentMessage(req, res); 
         
 
     }else if (req.params.name == "china"){
         init_china(req, res);
         res.send("china initiated");
-
-        console.log("res.cookie");
-        console.log(res.cookie);
-
-        sendUrgentMessage(req, res, players_data); 
+        publishUrgentMessage(req, res); 
 
     }else if (req.params.name == "russia"){
         init_russia(req, res);
         res.send("russia initiated");
-        sendUrgentMessage(req, res, players_data); 
+        publishUrgentMessage(req, res); 
 
     };
 
-    // chrome, opera
-    // connect.sid, sessionid
 
-    // chrome private, dziwnie odswieza button
-    // connect.sid
+});
 
+app.post('/api/player/:name/addequipment/:equip', function(req, res){
+    switch (req.params.name){
+        case "russia" :
+            russia.storeEquipment(req.params.equip);
+            var msg = { "player" : "russia" , "equipment" :  russia.getEquipments() } ;
+            res.send( msg );
+            publishEquipmentStateMessage(req, res, msg);
 
+        break; 
+        case "china" :
+            china.storeEquipment(req.params.equip);
+            var msg =  { "player" : "china" , "equipment" :  china.getEquipments() };
+            res.send( msg );
+            publishEquipmentStateMessage(req, res, msg);
 
+        break; 
+    };
 
 
 
 });
 
+
+app.post('/api/player/:name/startbattle', function(req, res){
+    if (req.params.name == "god"){
+        console.log("startubg battle");
+        var battle_res = calculateForces();
+        res.send(battle_res);
+        publishBattleMessage(req, res, battle_res);
+    }
+
+});
+
+function getRandomForces(force_item_value){
+    var min_value = force_item_value;
+
+    // even without given force type, we still have 10% good luck
+    if (min_value === 0){
+        min_value = 0.1;
+    }
+
+    var max_value = min_value * 1.33;
+    var final_value = _.random(min_value, max_value, true);
+
+    return final_value ; 
+
+};
+
+function calculateForces(){
+    var forces = {
+        "russia" : russia.getEquipments(),
+        "china" : china.getEquipments()
+    };
+
+    var russia_tank_ratio = getRandomForces(forces.russia.tank);
+    var china_tank_ratio = getRandomForces(forces.china.tank);
+
+    var russia_soldier_ratio = getRandomForces(forces.russia.soldier);
+    var china_soldier_ratio = getRandomForces(forces.china.soldier);
+
+    var russia_plane_ratio = getRandomForces(forces.russia.plane);
+    var china_plane_ratio = getRandomForces(forces.china.plane);
+
+    var battle_result = { 
+        tank : {} ,
+        soldier : {} , 
+        plane : {} 
+    };
+
+    if (russia_tank_ratio > china_tank_ratio){
+        var ratio = russia_tank_ratio / china_tank_ratio;
+        battle_result.tank = { "won" : "russia", "ratio" : ratio}; 
+    }else {
+        var ratio = china_tank_ratio /  russia_tank_ratio ;
+        battle_result.tank = { "won" : "china", "ratio" : ratio}; 
+
+    }
+
+
+
+    if (russia_soldier_ratio > china_soldier_ratio){
+        var ratio = russia_soldier_ratio / china_soldier_ratio;
+        battle_result.soldier = { "won" : "russia", "ratio" : ratio}; 
+    }else {
+        var ratio = china_soldier_ratio /  russia_soldier_ratio ;
+        battle_result.soldier = { "won" : "china", "ratio" : ratio}; 
+
+    }
+
+
+    if (russia_plane_ratio > china_plane_ratio){
+        var ratio = russia_plane_ratio / china_plane_ratio;
+        battle_result.plane = { "won" : "russia", "ratio" : ratio}; 
+    }else {
+        var ratio = china_plane_ratio /  russia_plane_ratio ;
+        battle_result.plane = { "won" : "china", "ratio" : ratio}; 
+
+    }
+
+    return battle_result;
+
+};
 
 
 app.get('/', function(req, res) {
@@ -157,30 +236,58 @@ app.get('/', function(req, res) {
 });
 
 
-function sendUrgentMessage(req, res, players_data){
-    // var target_client_csrf = req.cookies['csrftoken'];
-    var target_client_csrf = req.session.sess_data['sess_id'];
-
-    console.log("target_client_csrf");
-    console.log(target_client_csrf);
+function publishEquipmentStateMessage(req, res, msg){
+    var target_id = req.session.sess_data['sess_id'];
 
     var final_data = {};
 
-    final_data['owner_id'] = target_client_csrf;
-    final_data['players'] = players_data;
+    final_data['owner_id'] = target_id;
+    final_data['content'] = msg;
 
     eventConnections.forEach(function(resp){
-        // var current_csrf = resp.req.cookies['csrftoken'];
+        var d = new Date();
+        resp.write('id: ' + d.getMilliseconds() + '\n');
+        resp.write('event: ' + "equipmentStateMessage" + '\n');
+        resp.write('data:' + JSON.stringify(msg) +   '\n\n'); // Note the extra newline
 
-        // if ( god.get_player_id()  == current_csrf ){
-        //     god_data['god_status'] = 'you_are_god';
-        // }else {
-        //     god_data['god_status'] = 'you_are_nobody';
+    });
 
-        // }
-        console.log("final_data");
-        console.log(final_data);
+};
 
+
+
+
+function publishBattleMessage(req, res, msg){
+    var target_id = req.session.sess_data['sess_id'];
+
+    var final_data = {};
+
+    final_data['owner_id'] = target_id;
+    final_data['content'] = msg;
+
+    eventConnections.forEach(function(resp){
+        var d = new Date();
+        resp.write('id: ' + d.getMilliseconds() + '\n');
+        resp.write('event: ' + "battleMessage" + '\n');
+        resp.write('data:' + JSON.stringify(msg) +   '\n\n'); // Note the extra newline
+
+    });
+
+};
+
+
+function publishUrgentMessage(req, res){
+    var target_id = req.session.sess_data['sess_id'];
+
+    var final_data = {};
+
+    final_data['owner_id'] = target_id;
+    final_data['players'] = players_data;
+
+    console.log("players_data");
+    console.log(players_data);
+
+    eventConnections.forEach(function(resp){
         var d = new Date();
         resp.write('id: ' + d.getMilliseconds() + '\n');
         resp.write('event: ' + "urgentMessage" + '\n');
@@ -265,14 +372,7 @@ function createMsg() {
     return JSON.stringify(msg);
 }
 
-function resetCookies(){
-    eventConnections.forEach(function(resp) {
-        // console.log( resp.res.cookies ) ;
-    });
 
-};
-
-resetCookies();
 
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("app listening on port ");

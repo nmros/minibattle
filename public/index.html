@@ -18,11 +18,13 @@
 	</head>
 
 	<body>
-	<div ng-controller="warMainCtrl">
-		<button type="button" class="btn btn-default btn-sm" ui-sref="mainstage">Battlefield</button>
-		<button type="button" class="btn btn-default btn-sm" ui-sref="warplayers">Players</button>
+	<div ng-controller="warMainCtrl" class="container clearfix">
+		<div class="main fl">
+			<button type="button" class="btn btn-default btn-sm" ui-sref="mainstage">Battlefield</button>
+			<button type="button" class="btn btn-default btn-sm" ui-sref="warplayers">Players</button>
 
-		<div ui-view>
+			<div ui-view>
+			</div>
 		</div>
 	</div>
 

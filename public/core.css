@@ -1,4 +1,4 @@
-.bold {
+.bold, span.battleResultValue{
 	font-weight: bold;
 }
 

@@ -1,0 +1,58 @@
+<div id="controlGodPanel" class="row clearfix">
+	<div id="controls">
+
+
+
+		<div id="russiaControl">
+			<div class="title">
+				<h3>Russia :</h3>
+			</div>
+
+			<button type="button" ng-class="" class="btn btn-default btn-sm" ng-click="addEquipment('russia','tank')" >add tank </button>
+			<button type="button" ng-class="" class="btn btn-default btn-sm" ng-click="addEquipment('russia','soldier')" >add soldier </button>
+			<button type="button" ng-class="" class="btn btn-default btn-sm" ng-click="addEquipment('russia','plane')" >add plane </button>
+
+			<div class="playerMilitaryState">
+				<div class="playerEquipmentItem">
+					<span class="description"> Tanks : </span> <span  class="quantity"> {{russia.equipment.tank}}</span>
+				</div>
+				<div class="playerEquipmentItem">
+					<span class="description"> Soldiers : </span> <span  class="quantity"> {{russia.equipment.soldier}}</span>
+				</div>
+				<div class="playerEquipmentItem">
+					<span class="description"> Planes : </span> <span  class="quantity"> {{russia.equipment.plane}}</span>
+				</div>
+			</div>
+
+		</div>
+		<div id="chinaControl">
+			<div class="title">
+				<h3>China :</h3>
+			</div>
+
+			<button type="button" ng-class="" class="btn btn-default btn-sm" ng-click="addEquipment('china','tank')" >add tank </button>
+			<button type="button" ng-class="" class="btn btn-default btn-sm" ng-click="addEquipment('china','soldier')" >add soldier </button>
+			<button type="button" ng-class="" class="btn btn-default btn-sm" ng-click="addEquipment('china','plane')" >add plane </button>
+
+			<div class="playerMilitaryState">
+				<div class="playerEquipmentItem">
+					<span class="description"> Tanks : </span> <span  class="quantity"> {{china.equipment.tank}}</span>
+				</div>
+				<div class="playerEquipmentItem">
+					<span class="description"> Soldiers : </span> <span  class="quantity"> {{china.equipment.soldier}}</span>
+				</div>
+				<div class="playerEquipmentItem">
+					<span class="description"> Planes : </span> <span  class="quantity"> {{china.equipment.plane}}</span>
+				</div>
+			</div>
+
+		</div>
+
+		<div id="battleControl">
+			<button type="button" ng-class="" class="btn btn-danger " ng-click="startBattle()" >start batlle </button>
+
+			
+		</div>
+		
+	</div>
+</div>
